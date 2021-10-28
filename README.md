@@ -213,4 +213,4 @@ If you use this code for your research, please cite our papers.
 ```
 
 # Acknowledgement
-For some of the data modules and model functions used in this source code, we need to acknowledge the repo of [DoveNet](https://github.com/bcmi/Image-Harmonization-Dataset-iHarmony4/tree/master/DoveNet) and [CycleGAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix). 
+For some of the data modules and model functions used in this source code, we need to acknowledge the repo of [DoveNet](https://github.com/bcmi/Image-Harmonization-Dataset-iHarmony4/tree/master/DoveNet), [CycleGAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) and [IntrinsicHarmony](https://github.com/zhenglab/IntrinsicHarmony). 
