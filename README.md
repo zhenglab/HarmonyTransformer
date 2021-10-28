@@ -54,8 +54,8 @@ CUDA_VISIBLE_DEVICES=0 python evaluation/ih_evaluation.py --dataroot <dataset_di
     <th class="tg-0pky" align="center">Dataset</th>
     <th class="tg-0pky" align="center">Metrics</th>
     <th class="tg-0pky" align="center">Composite</th>
-    <th class="tg-0pky" align="center">Ours<br>(HT)</th>
-    <th class="tg-0pky" align="center">Ours<br>(D-HT)</th>
+    <th class="tg-0pky" align="center">Ours<br>(HT: 2H9L)</th>
+    <th class="tg-0pky" align="center">Ours<br>(D-HT: 2H9L)</th>
   </tr>
   <tr>
     <td class="tg-0pky" align="center">HCOCO</td>
