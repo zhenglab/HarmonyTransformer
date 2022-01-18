@@ -40,8 +40,6 @@ class dhtModel(BaseModel):
         if is_train:
             parser.set_defaults(pool_size=0, gan_mode='lsgan')
             parser.add_argument('--lambda_L1', type=float, default=100.0, help='weight for L1 loss')
-            parser.add_argument('--lambda_NCE_R', type=float, default=1.0, help='weight for NCE loss: NCE(G(X), X)')
-            parser.add_argument('--lambda_NCE_I', type=float, default=2.0, help='weight for NCE loss: NCE(G(X), X)')
             
         return parser
 
@@ -75,28 +73,6 @@ class dhtModel(BaseModel):
             self.optimizer_G = torch.optim.Adam(self.netG.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
             self.optimizers.append(self.optimizer_G)
 
-            # self.nce_layers = [int(i) for i in self.opt.nce_layers.split(',')]
-            # self.criterionNCE = []
-            # for nce_layer in self.nce_layers:
-            #     self.criterionNCE.append(PatchNCELoss(opt).to(self.device))
-            
-            # self.nce_layers = [int(i) for i in self.opt.nce_layers.split(',')]
-            # if opt.nce_r:
-            #     self.netF_R = networks.define_F(opt.input_nc, opt.netF, not opt.no_dropout, opt.init_type, opt.init_gain, opt)
-            #     util.saveprint(self.opt, 'netF_R', str(self.netF_R))  
-            #     self.model_names.append("F_R")
-            #     self.loss_names.append("NCE_R")
-            #     self.optimizer_F_R = torch.optim.Adam(self.netF_R.parameters(), lr=self.opt.lr, betas=(self.opt.beta1, self.opt.beta2))
-            #     self.optimizers.append(self.optimizer_F_R)
-            # if opt.nce_i:
-            #     self.netF_I = networks.define_F(opt.input_nc, opt.netF, not opt.no_dropout, opt.init_type, opt.init_gain, opt)
-            #     util.saveprint(self.opt, 'netF_I', str(self.netF_I))  
-            #     self.model_names.append("F_I")
-            #     self.loss_names.append("NCE_I")
-            #     self.optimizer_F_I = torch.optim.Adam(self.netF_I.parameters(), lr=self.opt.lr, betas=(self.opt.beta1, self.opt.beta2))
-            #     self.optimizers.append(self.optimizer_F_I)
-            # if self.opt.gradient_loss:
-            #     self.loss_names = ['G','G_L1',"G_R_grident","G_I_L2",'G_I_smooth']
     def set_position(self, pos, patch_pos=None):
         b = self.opt.batch_size
         self.pixel_pos = pos.unsqueeze(0).repeat(b, 1, 1, 1).to(self.device)
@@ -118,8 +94,6 @@ class dhtModel(BaseModel):
         self.image_paths = input['img_path']
         self.mask_r = F.interpolate(self.mask, size=[64,64])
         self.revert_mask = 1-self.mask
-        # self.real_mask = torch.zeros_like(self.mask).to(self.device)
-        # self.real_input = torch.cat([self.real, self.real_mask], dim=1)
 
     def data_dependent_initialize(self, data):
         """
@@ -134,8 +108,6 @@ class dhtModel(BaseModel):
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
 
-        # flops.print_model_flops(self.netG, inputs=self.inputs, image=self.comp*self.revert_mask, pixel_pos=self.pixel_pos.detach(), patch_pos=self.patch_pos.detach(), mask_r=self.mask_r, mask=self.mask)
-        # flops.print_model_params(net
         self.harmonized, self.reflectance, self.illumination = self.netG(inputs=self.inputs, image=self.comp*self.revert_mask, pixel_pos=self.pixel_pos.detach(), patch_pos=self.patch_pos.detach(), mask_r=self.mask_r, mask=self.mask)
         if not self.isTrain:
             self.harmonized = self.comp*(1-self.mask) + self.harmonized*self.mask
@@ -144,30 +116,11 @@ class dhtModel(BaseModel):
         """Calculate GAN and L1 loss for the generator"""
         self.loss_G_L1 = self.criterionL1(self.harmonized, self.real)*self.opt.lambda_L1
         self.loss_G = self.loss_G_L1
-        # if self.opt.nce_r:
-        #     self.reflectance_in = torch.cat([self.reflectance, self.real_mask], dim=1)
-        #     self.loss_NCE_R = self.calculate_NCE_loss(self.real_input, self.reflectance_in, self.netF_R, distance_type=self.opt.nce_r_distance_type)
-        #     self.loss_G = self.loss_G+self.loss_NCE_R*self.opt.lambda_NCE_R
-
-        # if self.opt.nce_i:
-        #     self.illumination_in = torch.cat([self.illumination, self.real_mask], dim=1)
-        #     self.loss_NCE_I = self.calculate_NCE_loss(self.real_input, self.illumination_in, self.netF_I, distance_type=self.opt.nce_i_distance_type)
-        #     self.loss_G = self.loss_G+self.loss_NCE_I*self.opt.lambda_NCE_I
-
-        # if self.opt.gradient_loss:
-        #     self.loss_G_R_grident = self.gradient_loss(self.reflectance, self.real)*10.0
-        #     self.loss_G_I_L2 = self.criterionL2(self.illumination, self.real)*10.0
-        #     self.loss_G_I_smooth = util.compute_smooth_loss(self.illumination)*1.0
-        #     self.loss_G = self.loss_G_L1 + self.loss_G_R_grident + self.loss_G_I_L2 + self.loss_G_I_smooth
-
         return self.loss_G
 
     def calculate_NCE_loss(self, src, tgt, net, distance_type='dot'):
         n_layers = len(self.nce_layers)
         feat_q = self.netG(inputs=tgt, layers=self.nce_layers, encode_only=True)
-
-        # if self.opt.flip_equivariance and self.flipped_for_equivariance:
-        #     feat_q = [torch.flip(fq, [3]) for fq in feat_q]
 
         feat_k = self.netG(inputs=src, layers=self.nce_layers, encode_only=True)
         feat_k_pool, sample_ids = net(feat_k, self.opt.num_patches, None, fg_mask=self.mask)
@@ -185,17 +138,9 @@ class dhtModel(BaseModel):
 
         # update G
         self.optimizer_G.zero_grad()
-        # if self.opt.nce_r:
-        #     self.optimizer_F_R.zero_grad()
-        # if self.opt.nce_i:
-        #     self.optimizer_F_I.zero_grad()
         self.loss_G = self.compute_G_loss()
         self.loss_G.backward()
         self.optimizer_G.step()
-        # if self.opt.nce_r:
-        #     self.optimizer_F_R.step()
-        # if self.opt.nce_i:
-        #     self.optimizer_F_I.step()
 
     def gradient_loss(self, input_1, input_2):
         g_x = self.criterionL1(util.gradient(input_1, 'x'), util.gradient(input_2, 'x'))
