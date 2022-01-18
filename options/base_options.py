@@ -86,14 +86,14 @@ class BaseOptions():
         parser.add_argument('--tr_l_dec_layers', type=int, default=9, help='tr_r_enc_head')
         parser.add_argument('--tr_enc_use_mask', action='store_true', help='tr_enc_use_mask')
         parser.add_argument('--light_use_mask', action='store_true', help='light_use_mask')
-        parser.add_argument('--light_only_trd', action='store_true', help='global light only use trd')
         parser.add_argument('--use_tr_dec', action='store_true', help='use transformer decoder')
         parser.add_argument('--dim_forward', type=int, default=2, help='tr_r_enc_head')
-
+        parser.add_argument('--use_two_dec', action='store_true', help='use two decoder')
         parser.add_argument('--pos_type', type=str, default='sincos', choices=['sincos', 'learn', 'random'], help='how to downsample the feature map')
-
-
-
+        parser.add_argument('--pos_none', action='store_true', help='global light only use trd')
+        parser.add_argument('--light_with_tre', action='store_true', help='light use tre and trd')
+        parser.add_argument('--ksize', type=int, default=4, help='weight for L1 loss')
+        parser.add_argument('--stride', type=int, default=4, help='weight for L1 loss')
         parser.add_argument('--local_rank', type=int, default=-1, help='number of GPUs to use')
         parser.add_argument('--init_method', type=str, default='tcp://127.0.0.1:', help='process port')
         parser.add_argument('--init_port', type=str, default='3999', help='process port')

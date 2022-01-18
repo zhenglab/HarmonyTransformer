@@ -1,0 +1,1 @@
+python metrics.py --data-path=../datasets/celeba-hq/celeba-v.flist --output-path=../checkpoints/3_ep_celeba-hq/val --valrst-path=../checkpoints/3_ep_celeba-hq/

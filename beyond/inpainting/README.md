@@ -1,0 +1,47 @@
+<base target="_blank"/>
+
+
+# Image Harmonization with Transformer **[[Paper](https://openaccess.thecvf.com/content/ICCV2021/papers/Guo_Image_Harmonization_With_Transformer_ICCV_2021_paper.pdf)]**<br>
+Zonghui Guo, Dongsheng Guo, Haiyong Zheng, Zhaorui Gu, Bing Zheng<br>
+
+Here we provide PyTorch implementation and the trained model of image inpainting framework.
+
+## Prerequisites
+
+- Linux
+- Python 3
+- CPU or NVIDIA GPU + CUDA CuDNN
+
+## Train/Test
+- Download Paris StreetView dataset, and put it in the directory dataset/images.
+
+- Train our HT model (FC-TRE-DeCNN):
+```bash
+python train.py --path=$configpath$
+```
+- Test our HT model
+```bash
+python test.py --path=$configpath$
+```
+
+## Apply a pre-trained model
+- Download the pretrained model from [Google Drive](https://drive.google.com/file/d/1rJhObsXP_cQVE4XOPWBzwT6nh1gnMDrR/view?usp=sharing) or [BaiduCloud](https://pan.baidu.com/s/130FikTVedUP_Eu0pYiMc3w) (access code: v56v), and put g.pth in the directory checkpoints/paris-fcin-deconvout-2H6L. Run:
+```bash
+# Our FCHT model
+python test.py --path=checkpoints/paris-fcin-deconvout-2H6L
+```
+
+# Bibtex
+If you use this code for your research, please cite our papers.
+
+
+```
+@InProceedings{Guo_2021_ICCV,
+    author    = {Guo, Zonghui and Guo, Dongsheng and Zheng, Haiyong and Gu, Zhaorui and Zheng, Bing and Dong, Junyu},
+    title     = {Image Harmonization With Transformer},
+    booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+    month     = {October},
+    year      = {2021},
+    pages     = {14870-14879}
+}
+```

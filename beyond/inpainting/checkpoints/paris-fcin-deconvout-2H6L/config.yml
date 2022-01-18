@@ -1,0 +1,44 @@
+MODE: 0             # 1: train, 2: test, 3: eval
+SEED: 10            # random seed
+GPU: [0]            # list of gpu ids
+MODEL: 1            # 1: ImagineGAN, 2: INN
+DATATYPE: 1         # 1: objects, 2:scenes
+
+TRAIN_FLIST: ./dataset/paris/train.flist
+VAL_FLIST: ./dataset/paris/val.flist
+# MASK_VAL_FLIST: [./dataset/places365/test/10-20.flist, ./dataset/places365/test/20-30.flist, ./dataset/places365/test/30-40.flist, ./dataset/places365/test/40-50.flist]
+MASK_VAL_FLIST: ./dataset/paris/testmask.flist
+
+LR: 0.0002                    # learning rate
+G_LR: 0.00005
+D_LR: 0.0002
+BETA1: 0.0                    # adam optimizer beta1
+BETA2: 0.9                    # adam optimizer beta2
+BATCH_SIZE: 4                 # input batch size for training
+INPUT_SIZE: 256               # input image size for training 0 for original size
+MAX_ITERS: 600000             # maximum number of iterations to train the model
+CENTER: 0
+CATMASK: True                 # True or False
+MEAN: [0.5,0.5,0.5]     # mean value
+STD: [0.5,0.5,0.5]      # standard deviation
+COARSE_ITE: 0
+
+GEN_TYPE: fcht
+rec_type: linear
+
+G1_ADV_LOSS_WEIGHT: 0.1
+G1_CONTENT_LOSS_WEIGHT: 0.1
+G1_COLOR_LOSS_WEIGHT: 2
+
+G2_ADV_LOSS_WEIGHT: 0.1
+G2_L1_LOSS_WEIGHT: 6
+G2_STYLE_LOSS_WEIGHT: 180
+G2_COLOR_LOSS_WEIGHT: 2
+G2_MRF_LOSS_WEIGHT: 0.05
+
+KLD_LOSS_WEIGHT: 0.001
+
+INTERVAL: 200
+SAMPLE_SIZE: 2                # number of images to sample
+
+SAVE_INTERAL: 10000

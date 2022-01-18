@@ -16,8 +16,10 @@ import math
 def define_G(netG='retinex',init_type='normal', init_gain=0.02, opt=None):
     """Create a generator
     """
-    if netG == 'HT':
-        net = HTGenerator(opt)
+    if netG == 'CNNHT':
+        net = CNNHTGenerator(opt)
+    elif netG == 'FCHT':
+        net = FCHTGenerator(opt)
     elif netG == 'DHT':
         net = DHTGenerator(opt)
     else:
@@ -27,22 +29,44 @@ def define_G(netG='retinex',init_type='normal', init_gain=0.02, opt=None):
     return net
 
 
-class HTGenerator(nn.Module):
+class FCHTGenerator(nn.Module):
     def __init__(self, opt=None):
-        super(HTGenerator, self).__init__()
-        self.reflectance_dim = 256
-        self.device = opt.device
-        r_enc_n_res = 0
-        r_dec_n_res = 0
-        self.enc = ContentEncoder(opt.n_downsample, r_enc_n_res, opt.input_nc+1, self.reflectance_dim, opt.ngf, 'in', opt.activ, pad_type=opt.pad_type)
-        self.transformer_enc = transformer.TransformerEncoders(self.reflectance_dim, nhead=opt.tr_r_enc_head, num_encoder_layers=opt.tr_r_enc_layers, dim_feedforward=self.reflectance_dim*opt.dim_forward, activation=opt.tr_act)
-        self.dec = ContentDecoder(opt.n_downsample, r_dec_n_res, self.reflectance_dim, opt.output_nc, opt.ngf, 'ln', opt.activ, pad_type=opt.pad_type)
-    def forward(self, inputs, pixel_pos=None, mask_r=None):
+        super(FCHTGenerator, self).__init__()
+        dim = 256
+        self.patch_to_embedding = nn.Sequential(
+            Rearrange('b c (h p1) (w p2) -> b (h w) (p1 p2 c)', p1 = opt.ksize, p2 = opt.ksize),
+            nn.Linear(opt.ksize*opt.ksize*(opt.input_nc+1), dim)
+        )
+        self.transformer_enc = transformer.TransformerEncoders(dim, nhead=opt.tr_r_enc_head, num_encoder_layers=opt.tr_r_enc_layers, dim_feedforward=dim*opt.dim_forward, activation=opt.tr_act)
+        self.dec = nn.Sequential(
+            nn.ConvTranspose2d(dim, opt.output_nc, kernel_size=opt.ksize, stride=opt.ksize, padding=0),
+            nn.Tanh()
+        )
+    def forward(self, inputs, pixel_pos=None):
+        patch_embedding = self.patch_to_embedding(inputs)
+        content = self.transformer_enc(patch_embedding.permute(1, 0, 2), src_pos=pixel_pos)
+        bs, L, C  = patch_embedding.size()
+        harmonized = self.dec(content.permute(1,2,0).view(bs, C, int(math.sqrt(L)), int(math.sqrt(L))))
+        return harmonized
+
+class CNNHTGenerator(nn.Module):
+    def __init__(self, opt=None):
+        super(CNNHTGenerator, self).__init__()
+        dim = 256
+        self.enc = ContentEncoder(opt.n_downsample, 0, opt.input_nc+1, dim, opt.ngf, 'in', opt.activ, pad_type=opt.pad_type)
+        self.transformer_enc = transformer.TransformerEncoders(dim, nhead=opt.tr_r_enc_head, num_encoder_layers=opt.tr_r_enc_layers, dim_feedforward=dim*opt.dim_forward, activation=opt.tr_act)
+        self.dec = nn.Sequential(
+            nn.ConvTranspose2d(dim, opt.output_nc, kernel_size=opt.ksize, stride=opt.ksize, padding=0),
+            nn.Tanh()
+        )
+        if opt.use_two_dec:
+            self.dec = ContentDecoder(opt.n_downsample, 0, dim, opt.output_nc, opt.ngf, 'ln', opt.activ, pad_type=opt.pad_type)
+
+    def forward(self, inputs, pixel_pos=None):
         content = self.enc(inputs)
         bs,c,h,w = content.size()
-        content = self.transformer_enc(content.flatten(2).permute(2, 0, 1), src_pos=pixel_pos, src_key_padding_mask=None)
+        content = self.transformer_enc(content.flatten(2).permute(2, 0, 1), src_pos=pixel_pos)
         harmonized = self.dec(content.permute(1, 2, 0).view(bs, c, h, w))
-
         return harmonized
 
 class DHTGenerator(nn.Module):
@@ -84,7 +108,7 @@ class GlobalLighting(nn.Module):
     def __init__(self, light_element=27, light_mlp_dim=8, norm=None, activ=None, pad_type='zero', opt=None):
     
         super(GlobalLighting, self).__init__()
-        self.light_only_trd = opt.light_only_trd
+        self.light_with_tre = opt.light_with_tre
 
         patch_size = opt.patch_size
         image_size = opt.crop_size
@@ -98,8 +122,8 @@ class GlobalLighting(nn.Module):
             nn.Linear(patch_dim, light_mlp_dim),
         )
         dim = light_mlp_dim
-        
-        self.transformer_enc = transformer.TransformerEncoders(dim, nhead=opt.tr_l_enc_head, num_encoder_layers=opt.tr_l_enc_layers, dim_feedforward=dim*2, dropout=0.0, activation=opt.tr_act)
+        if opt.light_with_tre:
+            self.transformer_enc = transformer.TransformerEncoders(dim, nhead=opt.tr_l_enc_head, num_encoder_layers=opt.tr_l_enc_layers, dim_feedforward=dim*2, dropout=0.0, activation=opt.tr_act)
         self.transformer_dec = transformer.TransformerDecoders(dim, nhead=opt.tr_l_dec_head, num_decoder_layers=opt.tr_l_dec_layers, dim_feedforward=dim*2, dropout=0.0, activation=opt.tr_act)
         self.light_embed = nn.Embedding(light_element, dim)
 
@@ -114,7 +138,8 @@ class GlobalLighting(nn.Module):
             mask_patch = self.to_patch(mask)
             mask_sum = torch.sum(mask_patch, dim=2)
             src_key_padding_mask = mask_sum.to(bool)
-        input_patch = self.transformer_enc(input_patch, src_pos=pos, src_key_padding_mask=src_key_padding_mask)
+        if self.light_with_tre:
+            input_patch = self.transformer_enc(input_patch, src_pos=pos, src_key_padding_mask=src_key_padding_mask)
         light = self.transformer_dec(input_patch, tgt, src_pos=pos, tgt_pos=light_embed, src_key_padding_mask=src_key_padding_mask, tgt_key_padding_mask=None)        
         return light, light_embed
 
