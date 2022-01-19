@@ -52,7 +52,6 @@ CUDA_VISIBLE_DEVICES=0 python evaluation/ih_evaluation.py --dataroot <dataset_di
 More compared results can be found at [Google Drive](https://drive.google.com/file/d/1qkLdvS8rTng4bxWKSFjtfPgQ5SK2OvGa/view?usp=sharing) or [BaduCloud](https://pan.baidu.com/s/1mf4h4jOrVO9jFEthYsHyzw) (access code: n37b).
 
 
-
 # Bibtex
 If you use this code for your research, please cite our papers.
 
