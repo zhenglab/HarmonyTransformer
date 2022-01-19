@@ -8,10 +8,10 @@ from . import harmony_networks as networks
 from . import base_networks as networks_init
 
 
-class FCHTModel(BaseModel):
+class HTModel(BaseModel):
     @staticmethod
     def modify_commandline_options(parser, is_train=True):
-        parser.set_defaults(norm='instance', netG='FCHT', dataset_mode='ihd')
+        parser.set_defaults(norm='instance', netG='HT', dataset_mode='ihd')
         if is_train:
             parser.add_argument('--lambda_L1', type=float, default=100.0, help='weight for L1 loss')
         return parser

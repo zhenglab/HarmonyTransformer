@@ -18,8 +18,8 @@ def define_G(netG='retinex',init_type='normal', init_gain=0.02, opt=None):
     """
     if netG == 'CNNHT':
         net = CNNHTGenerator(opt)
-    elif netG == 'FCHT':
-        net = FCHTGenerator(opt)
+    elif netG == 'HT':
+        net = HTGenerator(opt)
     elif netG == 'DHT':
         net = DHTGenerator(opt)
     else:
@@ -29,9 +29,9 @@ def define_G(netG='retinex',init_type='normal', init_gain=0.02, opt=None):
     return net
 
 
-class FCHTGenerator(nn.Module):
+class HTGenerator(nn.Module):
     def __init__(self, opt=None):
-        super(FCHTGenerator, self).__init__()
+        super(HTGenerator, self).__init__()
         dim = 256
         self.patch_to_embedding = nn.Sequential(
             Rearrange('b c (h p1) (w p2) -> b (h w) (p1 p2 c)', p1 = opt.ksize, p2 = opt.ksize),

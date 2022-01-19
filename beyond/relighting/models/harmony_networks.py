@@ -16,17 +16,17 @@ import math
 def define_G(netG='retinex',init_type='normal', init_gain=0.02, opt=None):
     """Create a generator
     """
-    if netG == 'CNNDHT':
-        net = CNNDHTGenerator(opt)
+    if netG == 'DHT':
+        net = DHTGenerator(opt)
     else:
         raise NotImplementedError('Generator model name [%s] is not recognized' % netG)
     net = networks_init.init_weights(net, init_type, init_gain)
     net = networks_init.build_model(opt, net)
     return net
 
-class CNNDHTGenerator(nn.Module):
+class DHTGenerator(nn.Module):
     def __init__(self, opt=None):
-        super(CNNDHTGenerator, self).__init__()
+        super(DHTGenerator, self).__init__()
         self.reflectance_dim = 256
         self.device = opt.device
         self.reflectance_enc = ContentEncoder(opt.n_downsample, 0, opt.input_nc, self.reflectance_dim, opt.ngf, 'in', opt.activ, pad_type=opt.pad_type)

@@ -13,20 +13,20 @@ from . import base_networks as networks_init
 from . import transformer
 import math
 
-def define_G(netG='FCHT',init_type='normal', init_gain=0.02, opt=None):
+def define_G(netG='HT',init_type='normal', init_gain=0.02, opt=None):
     """Create a generator
     """
-    if netG == 'FCHT':
-        net = FCHTGenerator(opt)
+    if netG == 'HT':
+        net = HTGenerator(opt)
     else:
         raise NotImplementedError('Generator model name [%s] is not recognized' % netG)
     net = networks_init.init_weights(net, init_type, init_gain)
     net = networks_init.build_model(opt, net)
     return net
 
-class FCHTGenerator(nn.Module):
+class HTGenerator(nn.Module):
     def __init__(self, opt=None):
-        super(FCHTGenerator, self).__init__()
+        super(HTGenerator, self).__init__()
         dim = 256
         self.patch_to_embedding = nn.Sequential(
             Rearrange('b c (h p1) (w p2) -> b (h w) (p1 p2 c)', p1 = opt.ksize, p2 = opt.ksize),

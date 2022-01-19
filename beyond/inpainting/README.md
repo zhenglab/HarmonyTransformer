@@ -1,10 +1,9 @@
 <base target="_blank"/>
 
 
-# Image Harmonization with Transformer **[[Paper](https://openaccess.thecvf.com/content/ICCV2021/papers/Guo_Image_Harmonization_With_Transformer_ICCV_2021_paper.pdf)]**<br>
-Zonghui Guo, Dongsheng Guo, Haiyong Zheng, Zhaorui Gu, Bing Zheng<br>
+# Transformer for Image Inpainting<br>
 
-Here we provide PyTorch implementation and the trained model of image inpainting framework.
+Here we provide PyTorch implementation and the pre-trained model of our latest version.
 
 ## Prerequisites
 
@@ -13,7 +12,7 @@ Here we provide PyTorch implementation and the trained model of image inpainting
 - CPU or NVIDIA GPU + CUDA CuDNN
 
 ## Train/Test
-- Download Paris StreetView dataset, and put it in the directory dataset/images.
+- Download Paris StreetView dataset, and put it in the directory `dataset/images/`.
 
 - Train our HT model (FC-TRE-DeCNN):
 ```bash
@@ -25,12 +24,12 @@ python test.py --path=$configpath$
 ```
 
 ## Apply a pre-trained model
-- Download the pretrained model from [Google Drive](https://drive.google.com/file/d/1pRDpYZrRd6iR314skgX086lmYvUMExIx/view?usp=sharing) or [BaiduCloud](https://pan.baidu.com/s/10xrromZdpnD5lB_nF1MO2Q) (access code: cb09); 
+- Download the pre-trained model from [Google Drive](https://drive.google.com/file/d/1pRDpYZrRd6iR314skgX086lmYvUMExIx/view?usp=sharing) or [BaiduCloud](https://pan.baidu.com/s/10xrromZdpnD5lB_nF1MO2Q) (access code: cb09); 
 
-- Put 'g.pth' in the directory 'checkpoints/paris-fcin-deconvout-2H6L' and modify 'MODE: 1' to 'MODE: 2' in the 'checkpoints/paris-fcin-deconvout-2H6L/config.yml';
+- Put `g.pth` in the directory `checkpoints/paris-fcin-deconvout-2H6L` and modify `MODE: 1` to `MODE: 2` in the `checkpoints/paris-fcin-deconvout-2H6L/config.yml`;
 - Run:
 ```bash
-# Our FCHT model
+# Our HT model
 python test.py --path=checkpoints/paris-fcin-deconvout-2H6L
 ```
 
