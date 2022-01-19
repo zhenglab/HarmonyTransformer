@@ -27,9 +27,9 @@ CUDA_VISIBLE_DEVICES=0 python test.py --model dht --tr_r_enc_head 2 --tr_r_enc_l
 - Download the pre-trained model from [Google Drive](https://drive.google.com/file/d/1ISXB7l71ox2efAwRrg3on8Oe_f_Zmapz/view?usp=sharing) or [BaiduCloud](https://pan.baidu.com/s/1eFKMOrqvnQv0An_ztl1Nng) (access code: 1o5g), and put `latest_net_G.pth` in the directory `checkpoints/relighting_experiment`. Run:
 ```bash
 # SH-based relighting
-CUDA_VISIBLE_DEVICES=0 python test.py --model cnndht  --name relighting_experiment  --relighting_action relighting  --dataset_root <dataset_dir> --dataset_name DPR --dataset_mode dpr  --batch_size 1 --init_port xxxx
+CUDA_VISIBLE_DEVICES=0 python test.py --model dht --name relighting_experiment  --relighting_action relighting  --dataset_root <dataset_dir> --dataset_name DPR --dataset_mode dpr  --batch_size 1 --init_port xxxx
 #Image-based relighting
-CUDA_VISIBLE_DEVICES=0 python test.py --model cnndht  --name relighting_experiment  --relighting_action transfer  --dataset_root <dataset_dir> --dataset_name DPR --dataset_mode dprtransfer  --batch_size 1 --init_port xxxx
+CUDA_VISIBLE_DEVICES=0 python test.py --model dht --name relighting_experiment  --relighting_action transfer  --dataset_root <dataset_dir> --dataset_name DPR --dataset_mode dprtransfer  --batch_size 1 --init_port xxxx
 ```
 
 # Bibtex
