@@ -25,7 +25,10 @@ python test.py --path=$configpath$
 ```
 
 ## Apply a pre-trained model
-- Download the pretrained model from [Google Drive](https://drive.google.com/file/d/1rJhObsXP_cQVE4XOPWBzwT6nh1gnMDrR/view?usp=sharing) or [BaiduCloud](https://pan.baidu.com/s/130FikTVedUP_Eu0pYiMc3w) (access code: v56v), and put g.pth in the directory checkpoints/paris-fcin-deconvout-2H6L. Run:
+- Download the pretrained model from [Google Drive](https://drive.google.com/file/d/1pRDpYZrRd6iR314skgX086lmYvUMExIx/view?usp=sharing) or [BaiduCloud](https://pan.baidu.com/s/10xrromZdpnD5lB_nF1MO2Q) (access code: cb09); 
+
+- Put 'g.pth' in the directory 'checkpoints/paris-fcin-deconvout-2H6L' and modify 'MODE: 1' to 'MODE: 2' in the 'checkpoints/paris-fcin-deconvout-2H6L/config.yml';
+- Run:
 ```bash
 # Our FCHT model
 python test.py --path=checkpoints/paris-fcin-deconvout-2H6L

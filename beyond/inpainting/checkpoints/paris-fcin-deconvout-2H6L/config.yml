@@ -1,4 +1,4 @@
-MODE: 0             # 1: train, 2: test, 3: eval
+MODE: 1             # 1: train, 2: test, 3: eval
 SEED: 10            # random seed
 GPU: [0]            # list of gpu ids
 MODEL: 1            # 1: ImagineGAN, 2: INN

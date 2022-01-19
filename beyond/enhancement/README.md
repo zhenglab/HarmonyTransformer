@@ -25,7 +25,7 @@ CUDA_VISIBLE_DEVICES=0 python test.py --model enhancement --tr_r_enc_head x --tr
 ```
 
 ## Apply a pre-trained model
-- Download the pretrained model from [Google Drive](https://drive.google.com/file/d/1rJhObsXP_cQVE4XOPWBzwT6nh1gnMDrR/view?usp=sharing) or [BaiduCloud](https://pan.baidu.com/s/130FikTVedUP_Eu0pYiMc3w) (access code: v56v), and put latest_net_G.pth in the directory checkpoints/enhancement_pretrained. Run:
+- Download the pretrained model from [Google Drive](https://drive.google.com/file/d/1vEvs-ddc6ZcJDd0Q8XD2_zZxgZ8CSBht/view?usp=sharing) or [BaiduCloud](https://pan.baidu.com/s/1nz9MKTox6196NLfw_Zlv7Q) (access code: mknj), and put latest_net_G.pth in the directory checkpoints/enhancement_pretrained. Run:
 ```bash
 # Our FCHT model
 CUDA_VISIBLE_DEVICES=0 python test.py --model enhancement --tr_r_enc_head 2 --tr_r_enc_layers 6 --name enhancement_pretrained --dataset_root <dataset_dir> --batch_size xx --init_port xxxx
