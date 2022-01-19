@@ -9,19 +9,9 @@ from . import base_networks as networks_init
 
 
 class dhtModel(BaseModel):
-    """ This class implements the pix2pix model, for learning a mapping from input images to output images given paired data.
-
-    The model training requires '--dataset_mode aligned' dataset.
-    By default, it uses a '--netG unet256' U-Net generator,
-    a '--netD basic' discriminator (PatchGAN),
-    and a '--gan_mode' vanilla GAN loss (the cross-entropy objective used in the orignal GAN paper).
-
-    pix2pix paper: https://arxiv.org/pdf/1611.07004.pdf
-    """
     @staticmethod
     def modify_commandline_options(parser, is_train=True):
        
-        # changing the default values to match the pix2pix paper (https://phillipi.github.io/pix2pix/)
         parser.set_defaults(norm='instance', netG='DHT', dataset_mode='ihd')
         if is_train:
             parser.set_defaults(pool_size=0)
@@ -77,18 +67,11 @@ class dhtModel(BaseModel):
         self.revert_mask = 1-self.mask
 
     def data_dependent_initialize(self, data):
-        """
-        The feature network netF is defined in terms of the shape of the intermediate, extracted
-        features of the encoder portion of netG. Because of this, the weights of netF are
-        initialized at the first feedforward pass with some input images.
-        Please also see PatchSampleF.create_mlp(), which is called at the first forward() call.
-        """
         pass
 
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
-
         self.harmonized, self.reflectance, self.illumination = self.netG(inputs=self.inputs, image=self.comp*self.revert_mask, pixel_pos=self.pixel_pos.detach(), patch_pos=self.patch_pos.detach(), mask_r=self.mask_r, mask=self.mask)
         if not self.isTrain:
             self.harmonized = self.comp*(1-self.mask) + self.harmonized*self.mask
