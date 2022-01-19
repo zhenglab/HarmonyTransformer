@@ -13,30 +13,30 @@ Here we provide the PyTorch implementation and pre-trained model of our latest v
 ## Train/Test
 - Download [iHarmony4](https://github.com/bcmi/Image-Harmonization-Dataset-iHarmony4) dataset.
 
-- Train our HT model (FC-TRE-DeCNN):
+- Train our HT model (**FC-TRE-DeCNN**):
 ```bash
 CUDA_VISIBLE_DEVICES=0 python train.py --model fcht --tr_r_enc_head x --tr_r_enc_layers x --name experiment_name --dataset_root <dataset_dir> --dataset_name IHD --batch_size xx --init_port xxxx
 ```
-- Test our HT model:
+- Test our HT model (**FC-TRE-DeCNN**):
 ```bash
 CUDA_VISIBLE_DEVICES=0 python test.py --model fcht --tr_r_enc_head x --tr_r_enc_layers x --name experiment_name --dataset_root <dataset_dir> --dataset_name IHD --batch_size xx --init_port xxxx
 ```
 
-- Train our CNNDHT model:
+- Train our **CNN-DHT** model:
 ```bash
 CUDA_VISIBLE_DEVICES=0 python train.py --model dht --light_use_mask --tr_r_enc_head 2 --tr_r_enc_layers 9  --tr_i_dec_head 2 --tr_i_dec_layers 9 --tr_l_dec_head 2 --tr_l_dec_layers 9 --name DHT_2H9L_allihd --dataset_root <dataset_dir> --dataset_name IHD --batch_size xx --init_port xxxx
 ```
-- Test our CNNDHT model:
+- Test our **CNN-DHT** model:
 ```bash
 CUDA_VISIBLE_DEVICES=0 python test.py --model dht --light_use_mask --tr_r_enc_head 2 --tr_r_enc_layers 9  --tr_i_dec_head 2 --tr_i_dec_layers 9 --tr_l_dec_head 2 --tr_l_dec_layers 9 --name DHT_2H9L_allihd --dataset_root <dataset_dir> --dataset_name IHD --batch_size xx --init_port xxxx
 ```
 
 ## Apply a pre-trained model
-- Download the pretrained model from [Google Drive](https://drive.google.com/file/d/1uQqveBSUfTmvA4FEWC_stAyf2oMS4UHC/view?usp=sharing) or [BaiduCloud](https://pan.baidu.com/s/1KxN0WYwaLBP1THatuzhq1A) (access code: vmrg), and put `latest_net_G.pth` in the directory `checkpoints/HT_2H9L_allihd` or `checkpoints/DHT_2H9L_allihd`. Run:
+- Download the pre-trained model from [Google Drive](https://drive.google.com/file/d/1uQqveBSUfTmvA4FEWC_stAyf2oMS4UHC/view?usp=sharing) or [BaiduCloud](https://pan.baidu.com/s/1KxN0WYwaLBP1THatuzhq1A) (access code: vmrg), and put `latest_net_G.pth` in the directory `checkpoints/HT_2H9L_allihd` or `checkpoints/DHT_2H9L_allihd`. Run:
 ```bash
-# Our FCHT model
+# Our HT model
 CUDA_VISIBLE_DEVICES=0 python test.py --model ht --tr_r_enc_head x --tr_r_enc_layers x --name HT_2H9L_allihd --dataset_root <dataset_dir> --dataset_name IHD --batch_size xx --init_port xxxx
-# Our CNNDHT model
+# Our CNN-DHT model
 CUDA_VISIBLE_DEVICES=0 python test.py --model dht --light_use_mask --tr_r_enc_head 2 --tr_r_enc_layers 9  --tr_i_dec_head 2 --tr_i_dec_layers 9 --tr_l_dec_head 2 --tr_l_dec_layers 9 --name DHT_2H9L_allihd --dataset_root <dataset_dir> --dataset_name IHD --batch_size xx --init_port xxxx
 ```
 ## Evaluation
