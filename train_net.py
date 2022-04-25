@@ -137,6 +137,7 @@ def test(cfg):
                 visuals_ones[label] = im_data[j:j+1, :, :, :]
             img_path_one.append(img_path[j])
             save_images(webpage, visuals_ones, img_path_one, aspect_ratio=cfg.aspect_ratio, width=cfg.display_winsize)
+            num_image += 1
             visuals_ones.clear()
 
     webpage.save()  # save the HTML
