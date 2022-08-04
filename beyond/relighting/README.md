@@ -14,11 +14,11 @@ Here we provide PyTorch implementation and the pre-trained model of our latest v
 ## Train/Test
 - Download DPR dataset.
 
-- Train our **CNN-DHT** model:
+- Train our **DHT+** model:
 ```bash
 CUDA_VISIBLE_DEVICES=0 python train.py --model dht --tr_r_enc_head 2 --tr_r_enc_layers 9  --tr_i_dec_head 2 --tr_i_dec_layers 9 --tr_l_dec_head 2 --tr_l_dec_layers 9 --name experiment_name --dataset_root <dataset_dir> --batch_size xx --init_port xxxx
 ```
-- Test our **CNN-DHT** model
+- Test our **DHT+** model
 ```bash
 CUDA_VISIBLE_DEVICES=0 python test.py --model dht --tr_r_enc_head 2 --tr_r_enc_layers 9  --tr_i_dec_head 2 --tr_i_dec_layers 9 --tr_l_dec_head 2 --tr_l_dec_layers 9 --name experiment_name --dataset_root <dataset_dir> --batch_size xx --init_port xxxx
 ```

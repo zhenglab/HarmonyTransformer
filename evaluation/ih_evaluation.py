@@ -3,7 +3,6 @@ import numpy as np
 import os
 import torch
 import argparse
-import cv2
 import pytorch_ssim
 import torchvision.transforms.functional as tf
 import torchvision

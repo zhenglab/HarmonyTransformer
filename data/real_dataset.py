@@ -102,7 +102,7 @@ class RealDataset(BaseDataset):
         #print(path)
         comp = Image.open(path).convert('RGB')
         #print(target_path)
-        real = Image.open(target_path).convert('RGB')
+        # real = Image.open(target_path).convert('RGB')
         #print(mask_path)
         mask = Image.open(mask_path).convert('1')
 
@@ -111,16 +111,16 @@ class RealDataset(BaseDataset):
 
         comp = tf.resize(comp, [self.image_size, self.image_size])
         mask = tf.resize(mask, [self.image_size, self.image_size])
-        real = tf.resize(real,[self.image_size,self.image_size])
+        # real = tf.resize(real,[self.image_size,self.image_size])
         
         comp = self.transform(comp)
         mask = tf.to_tensor(mask)
-        real = self.transform(real)
+        # real = self.transform(real)
         # mask[mask<1] = 0
         inputs=torch.cat([comp,mask],0)
 
 
-        return {'inputs': inputs, 'comp': comp, 'real': real,'img_path':path,'mask':mask}
+        return {'inputs': inputs, 'comp': comp, 'real': comp,'img_path':path,'mask':mask}
 
     def __len__(self):
         """Return the total number of images."""

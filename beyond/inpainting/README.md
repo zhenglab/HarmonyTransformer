@@ -14,11 +14,11 @@ Here we provide PyTorch implementation and the pre-trained model of our latest v
 ## Train/Test
 - Download Paris StreetView dataset, and put it in the directory `dataset/images/`.
 
-- Train our HT model (FC-TRE-DeCNN):
+- Train our HT+ model (FC-TRE-DeCNN):
 ```bash
 python train.py --path=$configpath$
 ```
-- Test our HT model
+- Test our HT+ model
 ```bash
 python test.py --path=$configpath$
 ```

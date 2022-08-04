@@ -4,6 +4,7 @@ import itertools
 import torch.nn.functional as F
 from .base_model import BaseModel
 from util import util
+from util import utils
 from . import harmony_networks as networks
 from . import base_networks as networks_init
 
@@ -11,7 +12,7 @@ from . import base_networks as networks_init
 class HTModel(BaseModel):
     @staticmethod
     def modify_commandline_options(parser, is_train=True):
-        parser.set_defaults(norm='instance', netG='HT', dataset_mode='ihd')
+        parser.set_defaults(norm='instance', netG='HTTRDFC', dataset_mode='wb')
         if is_train:
             parser.add_argument('--lambda_L1', type=float, default=100.0, help='weight for L1 loss')
         return parser
@@ -20,9 +21,13 @@ class HTModel(BaseModel):
         BaseModel.__init__(self, opt)
         self.opt = opt
         self.postion_embedding = None
-        self.loss_names = ['G','G_L1']
-        self.visual_names = ['mask', 'harmonized','comp','real']
-        
+        # specify the training losses you want to print out. The training/test scripts will call <BaseModel.get_current_losses>
+        self.loss_names = ['G','AWB_L1','T_L1','S_L1']
+        # specify the images you want to save/display. The training/test scripts will call <BaseModel.get_current_visuals>
+        self.visual_names = ['image', 'AWB','gt_AWB','T',"gt_T",'S',"gt_S"]
+        if not self.isTrain:
+            # self.visual_names = ['image', 'AWB', 'T', 'S','F','D','C']
+            self.visual_names = ['image', 'AWB', 'T', 'S']
         # specify the models you want to save to the disk. The training/test scripts will call <BaseModel.save_networks> and <BaseModel.load_networks>
         self.model_names = ['G'] 
         self.opt.device = self.device
@@ -35,6 +40,7 @@ class HTModel(BaseModel):
             # define loss functions
             self.criterionL1 = torch.nn.L1Loss()
             self.optimizer_G = torch.optim.Adam(self.netG.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
+            # self.optimizer_G = torch.optim.Adam(filter(lambda p: p.requires_grad, self.netG.parameters()), lr=opt.lr, betas=(opt.beta1, 0.999))
             self.optimizers.append(self.optimizer_G)
 
         
@@ -50,14 +56,19 @@ class HTModel(BaseModel):
             self.input_pos = input_pos.unsqueeze(0).repeat(b, 1, 1, 1).to(self.device)
             self.input_pos = self.input_pos.flatten(2).permute(2, 0, 1)
     def set_input(self, input):
-        
-        self.comp = input['comp'].to(self.device)
-        self.real = input['real'].to(self.device)
-        self.inputs = input['inputs'].to(self.device)
-        self.mask = input['mask'].to(self.device)
-        self.image_paths = input['img_path']
+        """Unpack input data from the dataloader and perform necessary pre-processing steps.
 
-        self.revert_mask = 1-self.mask
+        Parameters:
+            input (dict): include the data itself and its metadata information.
+
+        The option 'direction' can be used to swap images in domain A and domain B.
+        """
+        self.image = input['image'].to(self.device, dtype=torch.float32)
+        if self.isTrain:
+            self.gt_AWB = input['gt-AWB'].to(self.device, dtype=torch.float32)
+            self.gt_T = input['gt-T'].to(self.device, dtype=torch.float32)
+            self.gt_S = input['gt-S'].to(self.device, dtype=torch.float32)
+        self.image_paths = input['img_path']
 
     def data_dependent_initialize(self, data):
         """
@@ -71,13 +82,13 @@ class HTModel(BaseModel):
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
-        self.harmonized = self.netG(inputs=self.inputs, pixel_pos=self.input_pos)
-        if not self.isTrain:
-            self.harmonized = self.comp*self.revert_mask + self.harmonized*self.mask
+        self.AWB, self.T, self.S = self.netG(inputs=self.image, pixel_pos=self.input_pos)
     def compute_G_loss(self):
         """Calculate L1 loss for the generator"""
-        self.loss_G_L1 = self.criterionL1(self.harmonized, self.real)*self.opt.lambda_L1
-        self.loss_G = self.loss_G_L1
+        self.loss_AWB_L1 = self.criterionL1(self.AWB, self.gt_AWB)*self.opt.lambda_L1
+        self.loss_T_L1 = self.criterionL1(self.T, self.gt_T)*self.opt.lambda_L1
+        self.loss_S_L1 = self.criterionL1(self.S, self.gt_S)*self.opt.lambda_L1
+        self.loss_G = self.loss_AWB_L1 + self.loss_T_L1 + self.loss_S_L1
         return self.loss_G
 
     def optimize_parameters(self):
@@ -93,13 +104,18 @@ class HTModel(BaseModel):
     def PatchPositionEmbeddingSine(self, opt):
         temperature=10000
         if opt.stride == 1:
-            feature_h = int(256/opt.ksize)
+            feature_h = int(128/opt.ksize)
         else:
-            feature_h = int((256-opt.ksize)/opt.stride)+1
+            feature_h = int((128-opt.ksize)/opt.stride)+1
+        # feature_h = int(256/opt.ksize)*2
         num_pos_feats = 256//2
         mask = torch.ones((feature_h, feature_h))
         y_embed = mask.cumsum(0, dtype=torch.float32)
         x_embed = mask.cumsum(1, dtype=torch.float32)
+        # if self.normalize:
+        #     eps = 1e-6
+        #     y_embed = y_embed / (y_embed[:, -1:, :] + eps) * self.scale
+        #     x_embed = x_embed / (x_embed[:, :, -1:] + eps) * self.scale
 
         dim_t = torch.arange(num_pos_feats, dtype=torch.float32)
         dim_t = temperature ** (2 * (dim_t // 2) / num_pos_feats)

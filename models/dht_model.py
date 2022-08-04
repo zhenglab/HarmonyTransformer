@@ -76,25 +76,12 @@ class dhtModel(BaseModel):
         if not self.isTrain:
             self.harmonized = self.comp*(1-self.mask) + self.harmonized*self.mask
 
+
     def compute_G_loss(self):
         """Calculate GAN and L1 loss for the generator"""
         self.loss_G_L1 = self.criterionL1(self.harmonized, self.real)*self.opt.lambda_L1
         self.loss_G = self.loss_G_L1
         return self.loss_G
-
-    def calculate_NCE_loss(self, src, tgt, net, distance_type='dot'):
-        n_layers = len(self.nce_layers)
-        feat_q = self.netG(inputs=tgt, layers=self.nce_layers, encode_only=True)
-
-        feat_k = self.netG(inputs=src, layers=self.nce_layers, encode_only=True)
-        feat_k_pool, sample_ids = net(feat_k, self.opt.num_patches, None, fg_mask=self.mask)
-        feat_q_pool, _ = net(feat_q, self.opt.num_patches, sample_ids)
-
-        total_nce_loss = 0.0
-        for f_q, f_k, crit, nce_layer in zip(feat_q_pool, feat_k_pool, self.criterionNCE, self.nce_layers):
-            loss = crit(f_q, f_k, distance_type=distance_type)
-            total_nce_loss += loss.mean()
-        return total_nce_loss / n_layers
  
     def optimize_parameters(self):
         # forward

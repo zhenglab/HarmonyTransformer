@@ -13,20 +13,20 @@ Here we provide the PyTorch implementation and pre-trained model of our latest v
 ## Train/Test
 - Download [iHarmony4](https://github.com/bcmi/Image-Harmonization-Dataset-iHarmony4) dataset.
 
-- Train our HT model (**FC-TRE-DeCNN**):
+- Train our HT+ model (**FC-TRE-DeCNN**):
 ```bash
 CUDA_VISIBLE_DEVICES=0 python train.py --model ht --tr_r_enc_head x --tr_r_enc_layers x --name experiment_name --dataset_root <dataset_dir> --dataset_name IHD --batch_size xx --init_port xxxx
 ```
-- Test our HT model (**FC-TRE-DeCNN**):
+- Test our HT+ model (**FC-TRE-DeCNN**):
 ```bash
 CUDA_VISIBLE_DEVICES=0 python test.py --model ht --tr_r_enc_head x --tr_r_enc_layers x --name experiment_name --dataset_root <dataset_dir> --dataset_name IHD --batch_size xx --init_port xxxx
 ```
 
-- Train our **CNN-DHT** model:
+- Train our **DHT+** model:
 ```bash
 CUDA_VISIBLE_DEVICES=0 python train.py --model dht --light_use_mask --tr_r_enc_head x --tr_r_enc_layers x  --tr_i_dec_head x --tr_i_dec_layers x --tr_l_dec_head x --tr_l_dec_layers x --name DHT_experiment_name --dataset_root <dataset_dir> --dataset_name IHD --batch_size xx --init_port xxxx
 ```
-- Test our **CNN-DHT** model:
+- Test our **DHT+** model:
 ```bash
 CUDA_VISIBLE_DEVICES=0 python test.py --model dht --light_use_mask --tr_r_enc_head x --tr_r_enc_layers x  --tr_i_dec_head x --tr_i_dec_layers x --tr_l_dec_head x --tr_l_dec_layers x --name DHT_experiment_name --dataset_root <dataset_dir> --dataset_name IHD --batch_size xx --init_port xxxx
 ```

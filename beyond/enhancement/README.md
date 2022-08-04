@@ -14,11 +14,11 @@ Here we provide PyTorch implementation and the pre-trained model of our latest v
 ## Train/Test
 - Download MIT-Adobe-5K-UPE dataset.
 
-- Train our **HT** model:
+- Train our **HT+** model:
 ```bash
 CUDA_VISIBLE_DEVICES=0 python train.py --model ht --tr_r_enc_head x --tr_r_enc_layers x --name experiment_name --dataset_root <dataset_dir> --batch_size xx --init_port xxxx
 ```
-- Test our **HT** model
+- Test our **HT+** model
 ```bash
 CUDA_VISIBLE_DEVICES=0 python test.py --model ht --tr_r_enc_head x --tr_r_enc_layers x --name experiment_name --dataset_root <dataset_dir> --batch_size xx --init_port xxxx
 ```

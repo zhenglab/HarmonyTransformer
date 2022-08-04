@@ -97,7 +97,8 @@ def save_image(image_numpy, image_path, aspect_ratio=1.0):
         image_pil = image_pil.resize((h, int(w * aspect_ratio)), Image.BICUBIC)
     if aspect_ratio < 1.0:
         image_pil = image_pil.resize((int(h / aspect_ratio), w), Image.BICUBIC)
-    image_pil.save(image_path,quality=100) #added by Mia (quality)
+    # image_pil.save(image_path,quality=100) #added by Mia (quality)
+    image_pil.save(image_path,quality=90) #added by Mia (quality)
 
 
 def print_numpy(x, val=True, shp=False):
@@ -652,7 +653,8 @@ def calc_mask_mean_std(feat,mask, eps=1e-5, is_expland=False):
 
 def PositionEmbeddingSine(opt):
     temperature=10000
-    feature_h = opt.crop_size//2**opt.n_downsample
+    # feature_h = opt.crop_size//2**opt.n_downsample
+    feature_h = 128//2**opt.n_downsample
     num_pos_feats = opt.ngf*(2**opt.n_downsample) // 2
     mask = torch.ones((feature_h, feature_h))
     y_embed = mask.cumsum(0, dtype=torch.float32)
@@ -674,7 +676,8 @@ def PositionEmbeddingSine(opt):
 
 def PatchPositionEmbeddingSine(opt):
     temperature=10000
-    feature_h = 256//8
+    # feature_h = opt.crop_size//8
+    feature_h = 128//8
     num_pos_feats = 8*8*opt.patch_pos_nc//2
     mask = torch.ones((feature_h, feature_h))
     y_embed = mask.cumsum(0, dtype=torch.float32)
@@ -851,4 +854,9 @@ def saveonefeaturetoheatmap(path, features, mask=None):
     scatter_fig.savefig(path+'00000.png', dpi = 100)
     scatter_fig.clf()
 
-
+def freeze(layer):
+    for child in layer.children():
+        print(child)
+        for param in child.parameters():
+            param.requires_grad=False
+            # print(param)
