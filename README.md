@@ -1,6 +1,8 @@
 <base target="_blank"/>
 
-# Transformer for Image Harmonization and Beyond
+# Transformer for Image Harmonization and Beyond **[[Paper](https://ieeexplore.ieee.org/abstract/document/9893399)]**<br>
+Zonghui Guo, Zhaorui Gu, Bing Zheng, Junyu Dong, Haiyong Zheng<br>
+IEEE Transactions on Pattern Analysis and Machine Intelligence<br>
 
 Here we provide the PyTorch implementation and pre-trained model of our latest version, if you require the code of our previous ICCV version (**["Image Harmonization With Transformer"](https://openaccess.thecvf.com/content/ICCV2021/papers/Guo_Image_Harmonization_With_Transformer_ICCV_2021_paper.pdf)**), please click the **[released version](https://github.com/zhenglab/HarmonyTransformer/releases/tag/v1.0)**.
 
@@ -53,6 +55,14 @@ More compared results can be found at [Google Drive](https://drive.google.com/fi
 If you use this code for your research, please cite our papers.
 
 ```
+@article{guo2022transformer,
+  title={Transformer for Image Harmonization and Beyond},
+  author={Guo, Zonghui and Gu, Zhaorui and Zheng, Bing and Dong, Junyu and Zheng, Haiyong},
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  year={2022},
+  publisher={IEEE}
+}
+
 @InProceedings{Guo_2021_ICCV,
     author    = {Guo, Zonghui and Guo, Dongsheng and Zheng, Haiyong and Gu, Zhaorui and Zheng, Bing and Dong, Junyu},
     title     = {Image Harmonization With Transformer},

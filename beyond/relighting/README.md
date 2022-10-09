@@ -37,12 +37,11 @@ If you use this code for your research, please cite our papers.
 
 
 ```
-@InProceedings{Guo_2021_ICCV,
-    author    = {Guo, Zonghui and Guo, Dongsheng and Zheng, Haiyong and Gu, Zhaorui and Zheng, Bing and Dong, Junyu},
-    title     = {Image Harmonization With Transformer},
-    booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
-    month     = {October},
-    year      = {2021},
-    pages     = {14870-14879}
+@article{guo2022transformer,
+  title={Transformer for Image Harmonization and Beyond},
+  author={Guo, Zonghui and Gu, Zhaorui and Zheng, Bing and Dong, Junyu and Zheng, Haiyong},
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  year={2022},
+  publisher={IEEE}
 }
 ```
